@@ -1,0 +1,37 @@
+diff --git a/Documentation/kernel-parameters.txt b/Documentation/kernel-parameters.txt
+index 47bb23c..a60e6ad 100644
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@ -2185,7 +2185,7 @@
+ 			will be sent.
+ 			The default is to send the implementation identification
+ 			information.
+-	
++
+ 	nfs.recover_lost_locks =
+ 			[NFSv4] Attempt to recover locks that were lost due
+ 			to a lease timeout on the server. Please note that
+@@ -2653,6 +2653,14 @@
+ 		nomsi		[MSI] If the PCI_MSI kernel config parameter is
+ 				enabled, this kernel boot option can be used to
+ 				disable the use of MSI interrupts system-wide.
++    pci_acs_override [PCIE] Override missing PCIe ACS support for:
++        downstream
++            All downstream ports - full ACS capabilities
++        multifunction
++            Add multifunction devices - multifunction ACS subset
++        id:nnnn:nnnn
++            Specific device - full ACS capabilities
++            Specified as vid:did (vendor/device ID) in hex
+ 		noioapicquirk	[APIC] Disable all boot interrupt quirks.
+ 				Safety option to keep boot IRQs enabled. This
+ 				should never be necessary.
+@@ -3658,7 +3666,7 @@
+ 			See also Documentation/input/joystick-parport.txt
+ 
+ 	udbg-immortal	[PPC] When debugging early kernel crashes that
+-			happen after console_init() and before a proper 
++			happen after console_init() and before a proper
+ 			console driver takes over, this boot options might
+ 			help "seeing" what's going on.
+ 
