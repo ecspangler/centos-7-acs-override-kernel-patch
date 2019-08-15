@@ -20,6 +20,7 @@ https://bugzilla.redhat.com/show_bug.cgi?id=1113399
 https://bugzilla.redhat.com/attachment.cgi?id=913028&action=diff
 
 
+
 ## Installation
 
 ### Confirm Current IOMMU Groups
@@ -107,20 +108,77 @@ $ cp kernel.spec kernel.spec.distro
 
 Modify the kernel.spec to include the following:
 ```
+%define buildid .acs_kernel
 ```
 ```
+Patch40000: kernel-params-acs-override.patch
+Patch40001: quirk-acs-override.patch
 ```
 ```
+ApplyOptionalPatch kernel-params-acs-override.patch
+ApplyOptionalPatch quirk-acs-override.patch
 ```
 
-In the example kernel.spec in this repo, these updates are at lines 
+In the example kernel.spec in this repo, these updates are at lines 8, 452-453 and 782-783.
 
-Copy the   patch files from this repo into the ~/rpmbuild/SOURCES directory
+Copy the kernel-params-acs-override.patch and quirk-acs-override.patch patch files from this repo into the ~/rpmbuild/SOURCES directory.
+
+Build the kernel. Note: Do not build the kernel as root:
+```
+$ rpmbuild -bb --without kabichk --target=`uname -m` kernel.spec 2> build-err.log | tee build-out.log
+```
+
+Switch to root to install the kernel.
+
+Change to the RPMS directory which contains the output of the build (replace <user> with the user used to build the kernel):
+```
+# cd /home/<user>/rpmbuild/RPMS/`uname -m`/
+```
+
+Install the new kernel (do not overwrite the existing kernel):
+```
+# yum localinstall kernel-*.rpm
+```
+
+Check that the new kernel is available for boot:
+```
+# awk -F\' '$1=="menuentry " {print i++ " : " $2}' /etc/grub2.cfg
+0 : CentOS Linux (3.10.0-957.27.2.el7.acs_kernel.x86_64.debug) 7 (Core)
+1 : CentOS Linux (3.10.0-957.27.2.el7.acs_kernel.x86_64) 7 (Core)
+2 : CentOS Linux (3.10.0-957.27.2.el7.x86_64) 7 (Core)
+3 : CentOS Linux (3.10.0-957.el7.x86_64) 7 (Core)
+4 : CentOS Linux (0-rescue-ace3cce7f4a5477fabc3642f08598bec) 7 (Core)
+```
 
 
 ### Boot System Using the New Custom Kernel
 
+Based on the menu number of the custom kernel, set this to the default boot:
+```
+# grub2-set-default 1
+```
 
+Add the pcie_acs_override=downstream flag to GRUB_CMDLINE_LINUX (other options are multifunction and id:nnnn:nnnn, but downstream should be enough):
+```
+# vi /etc/sysconfig/grub
+GRUB_TIMEOUT=5
+GRUB_DISTRIBUTOR="$(sed 's, release .*$,,g' /etc/system-release)"
+GRUB_DEFAULT=saved
+GRUB_DISABLE_SUBMENU=true
+GRUB_TERMINAL_OUTPUT="console"
+GRUB_CMDLINE_LINUX="crashkernel=auto rd.lvm.lv=centos/root rd.lvm.lv=centos/swap rhgb quiet rd.driver.pre=vfio-pci intel_iommu=on iommu=pt nouveau.modeset=0 rd.driver.blacklist=nouveau modprobe.blacklist=nouveau video=vesafb:off,efifb:off pcie_acs_override=downstream"
+GRUB_DISABLE_RECOVERY="true"
+```
+
+Regenerate the grub config:
+```
+# grub2-mkconfig -o /etc/grub2.cfg
+```
+
+Reboot:
+```
+# reboot
+```
 
 
 ### Confirm Devices Separated
