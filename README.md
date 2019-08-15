@@ -10,7 +10,7 @@ Due to file differences between the kernel version used in Alex Williamson's ori
 
 This repository provides patch files and application instructions for the kernel version 3.10.0-957.27.2.el7.acs_kernel.x86_64.
 
-Note: The ACS override patch is typically considered a 'last resort' for PCIe passthrough if other methods don't work. It's not suitable for production systems (and neither are custom kernels), but may be useful for dev environments or homelabs.
+Note: The ACS override patch is typically considered a 'last resort' for PCIe passthrough if other methods don't work. It's not meant for production systems (and neither are custom kernels), but may be useful for dev environments or homelabs.
 
 
 References and ACS Override Alternatives:
