@@ -181,6 +181,12 @@ Reboot:
 # reboot
 ```
 
+Confirm the grub config updates are applied:
+```
+# cat /proc/cmdline
+BOOT_IMAGE=/vmlinuz-3.10.0-957.27.2.el7.acs_kernel.x86_64 root=/dev/mapper/centos-root ro crashkernel=auto rd.lvm.lv=centos/root rd.lvm.lv=centos/swap rhgb quiet rd.driver.pre=vfio-pci intel_iommu=on iommu=pt nouveau.modeset=0 rd.driver.blacklist=nouveau modprobe.blacklist=nouveau video=vesafb:off,efifb:off pcie_acs_override=downstream
+```
+
 
 ### Confirm Devices Separated
 
