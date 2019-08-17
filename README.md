@@ -2,7 +2,7 @@
 
 A common use case in virtualization is the need to passthrough a PCI or VGA device to a guest VM. However, because all devices within a single IOMMU group must be passed through at once, it can pose challenges to passthrough if there are multiple devices in the same IOMMU group.
 
-To address this issue, Alex Williamson created a kernel patch which allows each device to be placed into its own IOMMU group, easing passthrough:
+To address the issue, Alex Williamson created a kernel patch that allows each device to be placed into its own IOMMU group, easing passthrough:
 
 https://lkml.org/lkml/2013/5/30/513
 
